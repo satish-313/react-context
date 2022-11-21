@@ -12,9 +12,11 @@ interface Pokemon {
   speed: number;
 }
 
-const Theme = createContext("");
+const PokemonContext = createContext<ReturnType<typeof usePokemonSource>>(
+  {} as unknown as ReturnType<typeof usePokemonSource>
+);
 
-function usePokemon(): { pokemon: Pokemon[] } {
+function usePokemonSource(): { pokemon: Pokemon[] } {
   const [pokemon, setPokemon] = useState<Pokemon[]>([]);
 
   useEffect(() => {
@@ -22,16 +24,18 @@ function usePokemon(): { pokemon: Pokemon[] } {
       .then((res) => res.json())
       .then((data) => setPokemon(data));
   }, []);
+
   return { pokemon };
 }
 
-const PokemonList = ({ pokemon }: { pokemon: Pokemon[] }) => {
-  const theme = useContext(Theme);
+function usePokemon() {
+  return useContext(PokemonContext);
+}
+
+const PokemonList = () => {
+  const { pokemon } = usePokemon();
   return (
     <div>
-      <div>
-        <h1>Theme : {theme}</h1>
-      </div>
       {pokemon.map((p) => (
         <div key={p.id}>{p.name}</div>
       ))}
@@ -39,14 +43,11 @@ const PokemonList = ({ pokemon }: { pokemon: Pokemon[] }) => {
   );
 };
 
-
-
 function App() {
-  const { pokemon } = usePokemon();
   return (
-    <Theme.Provider value="light">
-      <PokemonList pokemon={pokemon} />{" "}
-    </Theme.Provider>
+    <PokemonContext.Provider value={usePokemonSource()}>
+      <PokemonList />{" "}
+    </PokemonContext.Provider>
   );
 }
 
