@@ -1,36 +1,4 @@
-import { useState, useEffect, createContext, useContext } from "react";
-
-interface Pokemon {
-  id: number;
-  name: string;
-  type: string[];
-  hp: number;
-  attack: number;
-  defence: number;
-  special_attack: number;
-  special_defense: number;
-  speed: number;
-}
-
-const PokemonContext = createContext<ReturnType<typeof usePokemonSource>>(
-  {} as unknown as ReturnType<typeof usePokemonSource>
-);
-
-function usePokemonSource(): { pokemon: Pokemon[] } {
-  const [pokemon, setPokemon] = useState<Pokemon[]>([]);
-
-  useEffect(() => {
-    fetch("/pokemon.json")
-      .then((res) => res.json())
-      .then((data) => setPokemon(data));
-  }, []);
-
-  return { pokemon };
-}
-
-function usePokemon() {
-  return useContext(PokemonContext);
-}
+import { PokemonProvider, usePokemon,} from "./store";
 
 const PokemonList = () => {
   const { pokemon } = usePokemon();
@@ -45,9 +13,9 @@ const PokemonList = () => {
 
 function App() {
   return (
-    <PokemonContext.Provider value={usePokemonSource()}>
+    <PokemonProvider>
       <PokemonList />{" "}
-    </PokemonContext.Provider>
+    </PokemonProvider>
   );
 }
 
