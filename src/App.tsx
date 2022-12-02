@@ -1,12 +1,14 @@
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { PokemonProvider, usePokemon } from "./store";
 
+const queryClient = new QueryClient();
 function SearchBox() {
-  const { search,setSearch } = usePokemon();
+  const { search, setSearch } = usePokemon();
 
   return (
     <input
       className="mt-3 block w-full rounded-md border border-gray-300 shadow-sm focus:border-indigo-800 focus:ring-indigo-800 sm:text-lg p-2"
-      placeholder="Search" 
+      placeholder="Search"
       value={search}
       onChange={(e) => setSearch(e.target.value)}
     />
@@ -40,12 +42,14 @@ const PokemonList = () => {
 
 function App() {
   return (
-    <PokemonProvider>
-      <div className="max-w-3xl mx-auto">
-        <SearchBox />
-        <PokemonList />{" "}
-      </div>
-    </PokemonProvider>
+    <QueryClientProvider client={queryClient}>
+      <PokemonProvider>
+        <div className="max-w-3xl mx-auto">
+          <SearchBox />
+          <PokemonList />{" "}
+        </div>
+      </PokemonProvider>
+    </QueryClientProvider>
   );
 }
 
